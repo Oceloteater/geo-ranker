@@ -4,7 +4,7 @@ import {
   LocationWeatherRankingType, 
   ActivityTypeEnum, 
   SuitabilityEnum 
-} from './ranking.types';
+} from './types/ranking.types';
 import { ActivityType } from '../../types/shared.types';
 
 @Resolver()

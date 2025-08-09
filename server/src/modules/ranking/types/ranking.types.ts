@@ -1,5 +1,5 @@
 import { ObjectType, Field, Float, Int, registerEnumType } from '@nestjs/graphql';
-import { DailyWeatherType } from '../weather/weather.types';
+import { DailyWeatherType } from '../../weather/types/weather.types';
 
 export enum ActivityTypeEnum {
   SKIING = 'skiing',

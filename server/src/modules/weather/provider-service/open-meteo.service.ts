@@ -66,8 +66,8 @@ export class OpenMeteoService {
           },
         },
       );
-      const { daily } = response.data;
       console.log('DATA:', response.data);
+      const { daily } = response.data;
 
       return daily.time.map((date, index) => ({
         date,
@@ -115,8 +115,8 @@ export class OpenMeteoService {
           },
         },
       );
-      const { hourly } = response.data;
       console.log('Marine DATA:', response.data);
+      const { hourly } = response.data;
 
       // Group hourly data by day and calculate daily averages
       return groupMarineDataByDay(hourly);
