@@ -22,7 +22,7 @@ export interface DailyWeatherData {
   uvIndex: number;
 }
 
-export type ActivityType = 'skiing' | 'surfing' | 'outdoor_sightseeing' | 'indoor_sightseeing';
+export type ActivityType = 'skiing' | 'surfing' | 'outdoor-sightseeing' | 'indoor-sightseeing';
 
 export interface GeocodingResult {
   name: string;
@@ -40,11 +40,11 @@ export interface WeatherApiResponse {
     time: string[];
     temperature_2m_max: number[];
     temperature_2m_min: number[];
-    relative_humidity_2m: number[];
-    wind_speed_10m: number[];
-    wind_direction_10m: number[];
+    relative_humidity_2m_mean: number[];
+    wind_speed_10m_max: number[];
+    wind_direction_10m_dominant: number[];
     precipitation_sum: number[];
-    cloud_cover: number[];
+    cloud_cover_mean: number[];
     uv_index_max: number[];
   };
 }

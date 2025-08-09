@@ -4,8 +4,8 @@ import { DailyWeatherType } from '../weather/weather.types';
 export enum ActivityTypeEnum {
   SKIING = 'skiing',
   SURFING = 'surfing',
-  OUTDOOR_SIGHTSEEING = 'outdoor_sightseeing',
-  INDOOR_SIGHTSEEING = 'indoor_sightseeing',
+  OUTDOOR_SIGHTSEEING = 'outdoor-sightseeing',
+  INDOOR_SIGHTSEEING = 'indoor-sightseeing',
 }
 
 export enum SuitabilityEnum {

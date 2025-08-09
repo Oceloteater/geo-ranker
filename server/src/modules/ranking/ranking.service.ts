@@ -19,9 +19,9 @@ export class RankingService {
 
   async getActivityRankings(
     city: string,
+    country: string,
     latitude: number,
     longitude: number,
-    country: string,
   ): Promise<LocationWeatherRanking> {
     const weatherForecast = await this.weatherService.getWeatherForecast(
       latitude,

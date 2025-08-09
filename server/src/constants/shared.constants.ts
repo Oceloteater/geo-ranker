@@ -1,8 +1,8 @@
 export const ACTIVITIES = {
   SKIING: 'skiing',
   SURFING: 'surfing', 
-  OUTDOOR_SIGHTSEEING: 'outdoor_sightseeing',
-  INDOOR_SIGHTSEEING: 'indoor_sightseeing'
+  OUTDOOR_SIGHTSEEING: 'outdoor-sightseeing',
+  INDOOR_SIGHTSEEING: 'indoor-sightseeing'
 } as const;
 
 export const ACTIVITY_LABELS = {
@@ -15,11 +15,11 @@ export const ACTIVITY_LABELS = {
 export const WEATHER_PARAMETERS = {
   TEMPERATURE_MAX: 'temperature_2m_max',
   TEMPERATURE_MIN: 'temperature_2m_min',
-  HUMIDITY: 'relative_humidity_2m',
-  WIND_SPEED: 'wind_speed_10m',
-  WIND_DIRECTION: 'wind_direction_10m',
+  HUMIDITY: 'relative_humidity_2m_mean',
+  WIND_SPEED: 'wind_speed_10m_max',
+  WIND_DIRECTION: 'wind_direction_10m_dominant',
   PRECIPITATION: 'precipitation_sum',
-  CLOUD_COVER: 'cloud_cover',
+  CLOUD_COVER: 'cloud_cover_mean',
   UV_INDEX: 'uv_index_max'
 } as const;
 

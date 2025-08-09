@@ -34,6 +34,7 @@ export class OpenMeteoService {
     latitude: number,
     longitude: number,
   ): Promise<DailyWeatherData[]> {
+    console.log('URL:', `${this.baseUrl}/forecast`);
     try {
       const response = await axios.get<WeatherApiResponse>(
         `${this.baseUrl}/forecast`,
@@ -57,19 +58,21 @@ export class OpenMeteoService {
         },
       );
       const { daily } = response.data;
-      
+      console.log('DATA:', response.data);
+
       return daily.time.map((date, index) => ({
         date,
         temperatureMax: daily.temperature_2m_max[index],
         temperatureMin: daily.temperature_2m_min[index],
-        humidity: daily.relative_humidity_2m[index],
-        windSpeed: daily.wind_speed_10m[index],
-        windDirection: daily.wind_direction_10m[index],
+        humidity: daily.relative_humidity_2m_mean[index],
+        windSpeed: daily.wind_speed_10m_max[index],
+        windDirection: daily.wind_direction_10m_dominant[index],
         precipitation: daily.precipitation_sum[index],
-        cloudCover: daily.cloud_cover[index],
+        cloudCover: daily.cloud_cover_mean[index],
         uvIndex: daily.uv_index_max[index],
       }));
     } catch (error) {
+      console.error(error);
       throw new HttpException(
         'Failed to fetch weather forecast',
         HttpStatus.BAD_REQUEST,

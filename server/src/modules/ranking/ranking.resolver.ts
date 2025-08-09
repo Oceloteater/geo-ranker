@@ -20,9 +20,9 @@ export class RankingResolver {
   ): Promise<LocationWeatherRankingType> {
     const result = await this.rankingService.getActivityRankings(
       city,
+      country,
       latitude,
       longitude,
-      country,
     );
 
     // Convert service types to GraphQL types
@@ -46,8 +46,8 @@ export class RankingResolver {
     const mapping: Record<ActivityType, ActivityTypeEnum> = {
       skiing: ActivityTypeEnum.SKIING,
       surfing: ActivityTypeEnum.SURFING,
-      outdoor_sightseeing: ActivityTypeEnum.OUTDOOR_SIGHTSEEING,
-      indoor_sightseeing: ActivityTypeEnum.INDOOR_SIGHTSEEING,
+      'outdoor-sightseeing': ActivityTypeEnum.OUTDOOR_SIGHTSEEING,
+      'indoor-sightseeing': ActivityTypeEnum.INDOOR_SIGHTSEEING,
     };
     return mapping[activity];
   }
