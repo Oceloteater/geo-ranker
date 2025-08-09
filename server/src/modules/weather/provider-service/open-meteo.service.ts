@@ -1,17 +1,26 @@
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import axios from 'axios';
-import { DailyWeatherData, GeocodingResult, WeatherApiResponse, GeocodingApiResponse } from '../../types/shared.types';
-import { WEATHER_PARAMETERS } from '../../constants/shared.constants';
+import { groupMarineDataByDay } from './helpers';
+import { 
+  DailyWeatherData, 
+  GeocodingResult, 
+  WeatherApiResponse, 
+  GeocodingApiResponse,
+  DailyMarineData,
+  MarineApiResponse 
+} from '../../../types/shared.types';
+import { WEATHER_PARAMETERS, MARINE_PARAMETERS } from '../../../constants/shared.constants';
 
 @Injectable()
 export class OpenMeteoService {
   private readonly baseUrl = process.env.OPEN_METEO_BASE_URL || 'https://api.open-meteo.com/v1';
+  private readonly geocodingUrl = process.env.OPEN_METEO_LOCALE_URL || 'https://geocoding-api.open-meteo.com/v1';
+  private readonly marineUrl = process.env.OPEN_METEO_MARINE_URL || 'https://marine-api.open-meteo.com/v1';
 
   async searchLocation(query: string): Promise<GeocodingResult[]> {
     try {
-      const geocodingUrl = process.env.OPEN_METEO_LOCALE_URL + '/search';
       const response = await axios.get<GeocodingApiResponse>(
-        geocodingUrl,
+        `${this.geocodingUrl}/search`,
         {
           params: {
             name: query,
@@ -72,9 +81,49 @@ export class OpenMeteoService {
         uvIndex: daily.uv_index_max[index],
       }));
     } catch (error) {
-      console.error(error);
+      console.error('Weather forecast error:', error);
       throw new HttpException(
         'Failed to fetch weather forecast',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
+
+  async getMarineForecast(
+    latitude: number,
+    longitude: number,
+  ): Promise<DailyMarineData[]> {
+    console.log('URL:', `${this.marineUrl}/marine`);
+    try {
+      const response = await axios.get<MarineApiResponse>(
+        `${this.marineUrl}/marine`,
+        {
+          params: {
+            latitude,
+            longitude,
+            hourly: [
+              MARINE_PARAMETERS.WAVE_HEIGHT,
+              MARINE_PARAMETERS.WAVE_DIRECTION,
+              MARINE_PARAMETERS.WAVE_PERIOD,
+              MARINE_PARAMETERS.WIND_WAVE_HEIGHT,
+              MARINE_PARAMETERS.WIND_WAVE_PERIOD,
+              MARINE_PARAMETERS.SWELL_WAVE_HEIGHT,
+              MARINE_PARAMETERS.SWELL_WAVE_DIRECTION,
+              MARINE_PARAMETERS.SWELL_WAVE_PERIOD,
+            ].join(','),
+            forecast_days: 7,
+          },
+        },
+      );
+      const { hourly } = response.data;
+      console.log('Marine DATA:', response.data);
+
+      // Group hourly data by day and calculate daily averages
+      return groupMarineDataByDay(hourly);
+    } catch (error) {
+      console.error('Marine forecast error:', error);
+      throw new HttpException(
+        'Failed to fetch marine forecast',
         HttpStatus.BAD_REQUEST,
       );
     }

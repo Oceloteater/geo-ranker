@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { WeatherResolver } from './weather.resolver';
 import { WeatherService } from './weather.service';
-import { OpenMeteoService } from './open-meteo.service';
+import { OpenMeteoService } from './provider-service/open-meteo.service';
 
 @Module({
   providers: [WeatherResolver, WeatherService, OpenMeteoService],

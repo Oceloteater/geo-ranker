@@ -58,3 +58,47 @@ export interface GeocodingApiResponse {
     timezone: string;
   }>;
 }
+
+export interface MarineData {
+  timestamp: string;
+  waveHeight: number;
+  waveDirection: number;
+  wavePeriod: number;
+  windWaveHeight: number;
+  windWavePeriod: number;
+  swellWaveHeight: number;
+  swellWaveDirection: number;
+  swellWavePeriod: number;
+}
+
+export interface DailyMarineData {
+  date: string;
+  hourly: MarineData[];
+  averages: {
+    waveHeight: number;
+    waveDirection: number;
+    wavePeriod: number;
+    windWaveHeight: number;
+    windWavePeriod: number;
+    swellWaveHeight: number;
+    swellWaveDirection: number;
+    swellWavePeriod: number;
+  };
+}
+
+export interface MarineApiResponse {
+  latitude: number;
+  longitude: number;
+  timezone: string;
+  hourly: {
+    time: string[];
+    wave_height: number[];
+    wave_direction: number[];
+    wave_period: number[];
+    wind_wave_height: number[];
+    wind_wave_period: number[];
+    swell_wave_height: number[];
+    swell_wave_direction: number[];
+    swell_wave_period: number[];
+  };
+}

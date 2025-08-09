@@ -22,6 +22,12 @@ enum ActivityType {
   SURFING
 }
 
+type DailyMarineDataType {
+  averages: MarineAveragesType!
+  date: String!
+  hourly: [MarineDataType!]!
+}
+
 type DailyRankingType {
   date: String!
   rankings: [ActivityRankingType!]!
@@ -56,8 +62,32 @@ type LocationWeatherRankingType {
   longitude: Float!
 }
 
+type MarineAveragesType {
+  swellWaveDirection: Float!
+  swellWaveHeight: Float!
+  swellWavePeriod: Float!
+  waveDirection: Float!
+  waveHeight: Float!
+  wavePeriod: Float!
+  windWaveHeight: Float!
+  windWavePeriod: Float!
+}
+
+type MarineDataType {
+  swellWaveDirection: Float!
+  swellWaveHeight: Float!
+  swellWavePeriod: Float!
+  timestamp: String!
+  waveDirection: Float!
+  waveHeight: Float!
+  wavePeriod: Float!
+  windWaveHeight: Float!
+  windWavePeriod: Float!
+}
+
 type Query {
   getActivityRankings(city: String!, country: String!, latitude: Float!, longitude: Float!): LocationWeatherRankingType!
+  getMarineForecast(latitude: Float!, longitude: Float!): [DailyMarineDataType!]!
   getWeatherForecast(latitude: Float!, longitude: Float!): [DailyWeatherType!]!
   searchLocations(query: String!): [LocationType!]!
 }

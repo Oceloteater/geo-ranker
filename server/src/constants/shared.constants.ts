@@ -23,6 +23,16 @@ export const WEATHER_PARAMETERS = {
   UV_INDEX: 'uv_index_max'
 } as const;
 
+export const MARINE_PARAMETERS = {
+  WAVE_HEIGHT: 'wave_height',
+  WAVE_DIRECTION: 'wave_direction',
+  WAVE_PERIOD: 'wave_period',
+  WIND_WAVE_HEIGHT: 'wind_wave_height',
+  WIND_WAVE_PERIOD: 'wind_wave_period',
+  SWELL_WAVE_HEIGHT: 'swell_wave_height',
+  SWELL_WAVE_DIRECTION: 'swell_wave_direction',
+  SWELL_WAVE_PERIOD: 'swell_wave_period'
+} as const;
 
 export const SUITABILITY_SCORES = {
   EXCELLENT: 85,
