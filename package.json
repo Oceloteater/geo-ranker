@@ -1,12 +1,31 @@
 {
   "name": "geo-ranker",
   "version": "1.0.0",
-  "main": "index.js",
+  "private": true,
+  "workspaces": [
+    "server",
+    "client",
+    "shared"
+  ],
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
+    "dev:server": "npm run start:dev --workspace=server",
+    "dev:client": "npm run start --workspace=client",
+    "build": "npm run build --workspace=server && npm run build --workspace=client",
+    "build:server": "npm run build --workspace=server",
+    "build:client": "npm run build --workspace=client",
+    "test": "npm run test --workspaces",
+    "clean": "rm -rf node_modules server/node_modules client/node_modules shared/node_modules server/dist client/build"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": ""
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "typescript": "^5.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "description": "Weather-based activity ranking system",
+  "keywords": ["weather", "ranking", "activities", "typescript", "nestjs", "react"],
+  "author": "Adam Carroll",
+  "license": "ISC"
 }
