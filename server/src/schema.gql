@@ -1,0 +1,70 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type ActivityConditionsType {
+  suitability: Suitability!
+  temperature: String!
+  weather: String!
+}
+
+type ActivityRankingType {
+  activity: ActivityType!
+  conditions: ActivityConditionsType!
+  reason: String!
+  score: Int!
+}
+
+enum ActivityType {
+  INDOOR_SIGHTSEEING
+  OUTDOOR_SIGHTSEEING
+  SKIING
+  SURFING
+}
+
+type DailyRankingType {
+  date: String!
+  rankings: [ActivityRankingType!]!
+  weather: DailyWeatherType!
+}
+
+type DailyWeatherType {
+  cloudCover: Float!
+  date: String!
+  humidity: Float!
+  precipitation: Float!
+  temperatureMax: Float!
+  temperatureMin: Float!
+  uvIndex: Float!
+  windDirection: Float!
+  windSpeed: Float!
+}
+
+type LocationType {
+  country: String!
+  latitude: Float!
+  longitude: Float!
+  name: String!
+  timezone: String!
+}
+
+type LocationWeatherRankingType {
+  city: String!
+  country: String!
+  forecast: [DailyRankingType!]!
+  latitude: Float!
+  longitude: Float!
+}
+
+type Query {
+  getActivityRankings(city: String!, country: String!, latitude: Float!, longitude: Float!): LocationWeatherRankingType!
+  getWeatherForecast(latitude: Float!, longitude: Float!): [DailyWeatherType!]!
+  searchLocations(query: String!): [LocationType!]!
+}
+
+enum Suitability {
+  EXCELLENT
+  FAIR
+  GOOD
+  POOR
+}

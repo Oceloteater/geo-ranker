@@ -6,12 +6,13 @@ import { join } from 'path';
 
 import { WeatherModule } from './modules/weather/weather.module';
 import { RankingModule } from './modules/ranking/ranking.module';
+import { HealthController } from './health/health.controller';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: ['.env.local', '.env'],
+      envFilePath: ['.env'],
     }),
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
@@ -19,15 +20,10 @@ import { RankingModule } from './modules/ranking/ranking.module';
       sortSchema: true,
       playground: process.env.NODE_ENV !== 'production',
       introspection: true,
-      cors: {
-        origin: process.env.NODE_ENV === 'production' 
-          ? process.env.FRONTEND_URL 
-          : ['http://localhost:3000'],
-        credentials: true,
-      },
     }),
     WeatherModule,
     RankingModule,
   ],
+  controllers: [HealthController],
 })
 export class AppModule {}
