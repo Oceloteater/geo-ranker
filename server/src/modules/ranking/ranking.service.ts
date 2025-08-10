@@ -10,7 +10,7 @@ import {
   DataSource
 } from '../../common/types';
 import { ActivityPluginRegistry } from './services/activity-plugin-registry.service';
-import { getWeatherDescription } from './helpers';
+import { getWeatherDescription } from '../../common/utils/weather.utils';
 import { 
   SkiingPlugin,
   SurfingPlugin, 
