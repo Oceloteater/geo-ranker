@@ -1,6 +1,5 @@
 import React from 'react';
-import ErrorBoundary from './components/ErrorBoundary';
-import Main from './components/Main';
+import { ErrorBoundary, Main } from './components';
 
 function App() {
   return (
