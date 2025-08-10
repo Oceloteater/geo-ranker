@@ -10,6 +10,7 @@ import ActivityRankings from './ActivityRankings';
 
 const Main: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
+  const [showEmptySearchMessage, setShowEmptySearchMessage] = useState(false);
   const { isMobile, isDesktop } = useResponsive();
 
   const {
@@ -27,7 +28,10 @@ const Main: React.FC = () => {
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
+      setShowEmptySearchMessage(false);
       searchLocations(searchQuery);
+    } else {
+      setShowEmptySearchMessage(true);
     }
   };
 
@@ -78,10 +82,16 @@ const Main: React.FC = () => {
       
       <SearchForm 
         searchQuery={searchQuery}
-        onSearchQueryChange={setSearchQuery}
+        onSearchQueryChange={(value) => {
+          setSearchQuery(value);
+          if (showEmptySearchMessage && value.trim()) {
+            setShowEmptySearchMessage(false);
+          }
+        }}
         onSubmit={handleSearch}
         loading={searchLoading}
         error={searchError}
+        showEmptySearchMessage={showEmptySearchMessage}
       />
 
       <LocationResults 

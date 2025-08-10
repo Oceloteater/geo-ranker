@@ -43,7 +43,7 @@ const ActivityRankings: React.FC<ActivityRankingsProps> = ({
 
   return (
     <div>
-      <h2>🏆 Activity Rankings for {selectedLocation.name}</h2>
+      <h2>🏆 Activity Rankings for {selectedLocation.name}, {selectedLocation.country}</h2>
       
       {loading && (
         <div style={{ color: '#666' }}>Loading activity rankings...</div>

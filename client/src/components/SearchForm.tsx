@@ -9,6 +9,7 @@ interface SearchFormProps {
   onSubmit: (e: React.FormEvent) => void;
   loading: boolean;
   error: ApolloError | undefined;
+  showEmptySearchMessage?: boolean;
 }
 
 const SearchForm: React.FC<SearchFormProps> = ({
@@ -16,7 +17,8 @@ const SearchForm: React.FC<SearchFormProps> = ({
   onSearchQueryChange,
   onSubmit,
   loading,
-  error
+  error,
+  showEmptySearchMessage = false
 }) => {
   const { isMobile } = useResponsive();
 
@@ -75,7 +77,7 @@ const SearchForm: React.FC<SearchFormProps> = ({
         />
         <button 
           type="submit" 
-          disabled={loading || !searchQuery.trim()}
+          disabled={loading}
           style={getButtonStyle()}
         >
           {loading ? 'Searching...' : 'Search'}
@@ -85,6 +87,12 @@ const SearchForm: React.FC<SearchFormProps> = ({
       {error && (
         <div style={{ color: 'red', marginTop: '10px', padding: '10px', backgroundColor: '#ffebee', borderRadius: '4px' }}>
           <strong>Search Error:</strong> {getUserFriendlyError(error)}
+        </div>
+      )}
+      
+      {showEmptySearchMessage && (
+        <div style={{ color: '#e67e00', marginTop: '10px', padding: '10px', backgroundColor: '#fff3e0', borderRadius: '4px' }}>
+          <strong>Please enter a location:</strong> Try searching for a city like "London", "New York", or "Cape Town"
         </div>
       )}
     </div>

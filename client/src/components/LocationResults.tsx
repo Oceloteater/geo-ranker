@@ -15,6 +15,14 @@ const LocationResults: React.FC<LocationResultsProps> = ({
 }) => {
   if (locations.length === 0) return null;
 
+  const isLocationSelected = (location: Location): boolean => {
+    if (!selectedLocation) return false;
+    return selectedLocation.name === location.name && 
+           selectedLocation.country === location.country &&
+           selectedLocation.latitude === location.latitude &&
+           selectedLocation.longitude === location.longitude;
+  };
+
   return (
     <div style={{ marginBottom: '20px' }}>
       <h2>📍 Found Locations ({locations.length})</h2>
@@ -28,7 +36,7 @@ const LocationResults: React.FC<LocationResultsProps> = ({
               border: '1px solid #ddd',
               borderRadius: '4px',
               cursor: 'pointer',
-              backgroundColor: selectedLocation?.name === location.name ? '#e3f2fd' : '#f9f9f9',
+              backgroundColor: isLocationSelected(location) ? '#e3f2fd' : '#f9f9f9',
               transition: 'background-color 0.2s'
             }}
           >
