@@ -13,8 +13,8 @@ export class SkiingPlugin implements IActivityPlugin {
   scoreActivity(weather: IDailyWeatherData, marine?: IDailyMarineData): IActivityScore {
     const avgTemp = (weather.temperatureMax + weather.temperatureMin) / 2;
     
-    // If it's consistently too warm (tropical/desert climates), skiing is not suitable
-    if (avgTemp > 15 && weather.temperatureMin > 10) {
+    // Check for extremely warm locations (tropical/desert)
+    if (avgTemp > 20 || weather.temperatureMin > 15) {
       return {
         score: 0,
         reason: 'Location too warm for skiing - no snow conditions available',
@@ -32,10 +32,12 @@ export class SkiingPlugin implements IActivityPlugin {
   private calculateScore(weather: IDailyWeatherData, avgTemp: number): number {
     let score = 0;
     
-    // Temperature scoring (cold is good for skiing)
-    if (avgTemp >= -5 && avgTemp <= 5) score += 40;
-    else if (avgTemp >= -15 && avgTemp <= 10) score += 25;
-    else score += 5;
+    // Temperature scoring (account for mountain altitude being colder than city)
+    if (avgTemp >= -5 && avgTemp <= 5) score += 40;       // Perfect for ski resorts at altitude
+    else if (avgTemp >= -10 && avgTemp <= 10) score += 35; // Very good conditions
+    else if (avgTemp >= -15 && avgTemp <= 15) score += 25; // Good conditions (mountains will be colder)
+    else if (avgTemp >= -20 && avgTemp <= 18) score += 15; // Marginal but possible
+    else score += 5;                                       // Poor conditions
     
     // Precipitation (some snow is good, too much rain is bad)
     if (weather.precipitation < 2) score += 20;
@@ -60,11 +62,15 @@ export class SkiingPlugin implements IActivityPlugin {
 
   private getReason(weather: IDailyWeatherData, avgTemp: number): string {
     if (avgTemp >= -5 && avgTemp <= 5) {
-      return 'Perfect skiing temperature with good snow conditions';
-    } else if (avgTemp > 5) {
-      return 'Too warm - snow may be slushy or melting';
+      return 'Excellent conditions for skiing at nearby mountain resorts';
+    } else if (avgTemp >= -10 && avgTemp <= 10) {
+      return 'Very good skiing conditions expected at altitude';
+    } else if (avgTemp >= -15 && avgTemp <= 15) {
+      return 'Good skiing conditions - mountains will be colder than valley temperatures';
+    } else if (avgTemp > 15) {
+      return 'Too warm even for high altitude skiing';
     } else {
-      return 'Very cold - bundle up but good for powder';
+      return 'Very cold conditions - excellent for powder skiing';
     }
   }
 

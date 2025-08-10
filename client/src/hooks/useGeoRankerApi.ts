@@ -20,7 +20,7 @@ import {
 // =============================================================================
 
 export const useSearchLocations = () => {
-  const [searchLocations, { data, loading, error }] = useLazyQuery<
+  const [searchLocations, { data, loading, error, client }] = useLazyQuery<
     SearchLocationsResponse,
     SearchLocationsVariables
   >(SEARCH_LOCATIONS);
@@ -31,8 +31,15 @@ export const useSearchLocations = () => {
     }
   };
 
+  const clearResults = () => {
+    // Clear the Apollo cache for this query to remove search results
+    client?.cache.evict({ fieldName: 'searchLocations' });
+    client?.cache.gc();
+  };
+
   return {
     search,
+    clearResults,
     locations: data?.searchLocations || [],
     loading,
     error
@@ -116,6 +123,8 @@ export const useGeoRankerWorkflow = () => {
   const selectLocationImmediate = (location: Location) => {
     setSelectedLocation(location);
     rankingsHook.fetchRankings(location);
+    // Clear search results when directly selecting a location (like Cape Town example)
+    searchHook.clearResults();
   };
 
   return {

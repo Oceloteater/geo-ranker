@@ -26,10 +26,11 @@ export class SurfingPlugin implements IActivityPlugin {
     // Add marine data scoring
     score += this.calculateMarineScore(marine);
     
-    const reason = this.getReason(weather, avgTemp, marine);
-    const suitability = this.getSuitability(score);
+    const finalScore = Math.min(100, score);
+    const suitability = this.getSuitability(finalScore);
+    const reason = this.getReason(weather, avgTemp, marine, finalScore);
 
-    return { score: Math.min(100, score), reason, suitability };
+    return { score: finalScore, reason, suitability };
   }
 
   private calculateWeatherScore(weather: IDailyWeatherData, avgTemp: number): number {
@@ -78,13 +79,32 @@ export class SurfingPlugin implements IActivityPlugin {
     return marineScore;
   }
 
-  private getReason(weather: IDailyWeatherData, avgTemp: number, marine?: IDailyMarineData): string {
-    if (marine && marine.averages.waveHeight >= 1 && marine.averages.waveHeight <= 3 && avgTemp >= 20) {
-      return `Good waves (${marine.averages.waveHeight.toFixed(1)}m) and warm temperature for surfing`;
-    } else if (weather.windSpeed >= 10 && weather.windSpeed <= 25 && avgTemp >= 20) {
-      return 'Good wind and warm temperature for surfing';
-    } else if (avgTemp < 15) {
-      return 'Water temperature may be too cold';
+  private getReason(weather: IDailyWeatherData, avgTemp: number, marine?: IDailyMarineData, score?: number): string {
+    // For excellent scores, always give positive messaging
+    if (score && score >= 80) {
+      if (marine && marine.averages.waveHeight >= 1) {
+        return `Excellent surfing conditions with ${marine.averages.waveHeight.toFixed(1)}m waves`;
+      }
+      return 'Excellent weather conditions for surfing';
+    }
+    
+    // For good scores, focus on positives but mention any concerns
+    if (score && score >= 65) {
+      if (marine && marine.averages.waveHeight >= 1 && marine.averages.waveHeight <= 3 && avgTemp >= 20) {
+        return `Good waves (${marine.averages.waveHeight.toFixed(1)}m) and warm temperature for surfing`;
+      } else if (weather.windSpeed >= 10 && weather.windSpeed <= 25 && avgTemp >= 20) {
+        return 'Good wind and warm temperature for surfing';
+      } else if (avgTemp < 15) {
+        return 'Good wave conditions but water temperature may be cold';
+      }
+      return 'Good conditions for surfing';
+    }
+    
+    // For lower scores, be more specific about limitations
+    if (avgTemp < 15) {
+      return 'Water temperature may be too cold for surfing';
+    } else if (marine && marine.averages.waveHeight < 0.5) {
+      return 'Wave conditions too calm for good surfing';
     } else {
       return 'Moderate conditions for surfing';
     }
