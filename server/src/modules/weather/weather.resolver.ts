@@ -1,7 +1,6 @@
 import { Resolver, Query, Args, Float } from '@nestjs/graphql';
 import { WeatherService } from './weather.service';
-import { LocationType, DailyWeatherType } from './types/weather.types';
-import { DailyMarineDataType } from './types/marine.types';
+import { LocationType, DailyWeatherType, DailyMarineDataType } from '../../common/graphql/types';
 
 @Resolver()
 export class WeatherResolver {

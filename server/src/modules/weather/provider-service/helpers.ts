@@ -1,6 +1,6 @@
-import { DailyMarineData, MarineApiResponse } from '../../../types/shared.types';
+import { IDailyMarineData, IMarineApiResponse } from '../../../common/types';
 
-export const groupMarineDataByDay = (hourly: MarineApiResponse['hourly']): DailyMarineData[] => {
+export const groupMarineDataByDay = (hourly: IMarineApiResponse['hourly']): IDailyMarineData[] => {
     const dailyGroups = new Map<string, any[]>();
 
     // Group hourly data by date

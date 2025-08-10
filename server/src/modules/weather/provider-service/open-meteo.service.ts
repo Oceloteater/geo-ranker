@@ -2,13 +2,13 @@ import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import axios from 'axios';
 import { groupMarineDataByDay } from './helpers';
 import { 
-  DailyWeatherData, 
-  GeocodingResult, 
-  WeatherApiResponse, 
-  GeocodingApiResponse,
-  DailyMarineData,
-  MarineApiResponse 
-} from '../../../types/shared.types';
+  IDailyWeatherData, 
+  IGeocodingResult, 
+  IWeatherApiResponse, 
+  IGeocodingApiResponse,
+  IDailyMarineData,
+  IMarineApiResponse 
+} from '../../../common/types';
 import { WEATHER_PARAMETERS, MARINE_PARAMETERS } from '../../../constants/shared.constants';
 
 @Injectable()
@@ -17,9 +17,9 @@ export class OpenMeteoService {
   private readonly geocodingUrl = process.env.OPEN_METEO_LOCALE_URL || 'https://geocoding-api.open-meteo.com/v1';
   private readonly marineUrl = process.env.OPEN_METEO_MARINE_URL || 'https://marine-api.open-meteo.com/v1';
 
-  async searchLocation(query: string): Promise<GeocodingResult[]> {
+  async searchLocation(query: string): Promise<IGeocodingResult[]> {
     try {
-      const response = await axios.get<GeocodingApiResponse>(
+      const response = await axios.get<IGeocodingApiResponse>(
         `${this.geocodingUrl}/search`,
         {
           params: {
@@ -42,10 +42,10 @@ export class OpenMeteoService {
   async getWeatherForecast(
     latitude: number,
     longitude: number,
-  ): Promise<DailyWeatherData[]> {
+  ): Promise<IDailyWeatherData[]> {
     console.log('URL:', `${this.baseUrl}/forecast`);
     try {
-      const response = await axios.get<WeatherApiResponse>(
+      const response = await axios.get<IWeatherApiResponse>(
         `${this.baseUrl}/forecast`,
         {
           params: {
@@ -92,10 +92,10 @@ export class OpenMeteoService {
   async getMarineForecast(
     latitude: number,
     longitude: number,
-  ): Promise<DailyMarineData[]> {
+  ): Promise<IDailyMarineData[]> {
     console.log('URL:', `${this.marineUrl}/marine`);
     try {
-      const response = await axios.get<MarineApiResponse>(
+      const response = await axios.get<IMarineApiResponse>(
         `${this.marineUrl}/marine`,
         {
           params: {

@@ -4,8 +4,8 @@ import {
   LocationWeatherRankingType, 
   ActivityTypeEnum, 
   SuitabilityEnum 
-} from './types/ranking.types';
-import { ActivityType } from '../../types/shared.types';
+} from '../../common/graphql/types';
+import { ActivityType } from '../../common/types';
 
 @Resolver()
 export class RankingResolver {

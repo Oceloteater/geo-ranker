@@ -1,43 +1,82 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, OnModuleInit } from '@nestjs/common';
 import { WeatherService } from '../weather/weather.service';
-import { DailyWeatherData, ActivityType } from '../../types/shared.types';
-import { ACTIVITIES, SUITABILITY_SCORES } from '../../constants/shared.constants';
 import { 
-  ActivityRanking,
-  DailyRanking,
-  LocationWeatherRanking
-} from '../../common/interfaces/ranking.interface';
+  IDailyWeatherData,
+  ActivityType,
+  IDailyMarineData,
+  IActivityRanking,
+  IDailyRanking,
+  ILocationWeatherRanking,
+  DataSource
+} from '../../common/types';
+import { ActivityPluginRegistry } from './services/activity-plugin-registry.service';
+import { getWeatherDescription } from './helpers';
 import { 
-  calculateSkiingScore,
-  calculateSurfingScore,
-  calculateOutdoorSightseeingScore,
-  calculateIndoorSightseeingScore,
-  getSkiingReason,
-  getSurfingReason,
-  getOutdoorSightseeingReason,
-  getIndoorSightseeingReason,
-  getWeatherDescription
-} from './helpers';
+  SkiingPlugin,
+  SurfingPlugin, 
+  OutdoorSightseeingPlugin,
+  IndoorSightseeingPlugin
+} from './plugins';
+import { getActivityConfig } from '../../config/activities.config';
 
 @Injectable()
-export class RankingService {
-  constructor(private readonly weatherService: WeatherService) {}
+export class RankingService implements OnModuleInit {
+  constructor(
+    private readonly weatherService: WeatherService,
+    private readonly pluginRegistry: ActivityPluginRegistry
+  ) {}
+
+  onModuleInit() {
+    // Map of available plugins
+    const availablePlugins = {
+      'skiing': SkiingPlugin,
+      'surfing': SurfingPlugin,
+      'outdoor-sightseeing': OutdoorSightseeingPlugin,
+      'indoor-sightseeing': IndoorSightseeingPlugin
+    };
+
+    // Register plugins based on configuration
+    const config = getActivityConfig();
+    config
+      .filter(activityConfig => activityConfig.enabled)
+      .forEach(activityConfig => {
+        const PluginClass = availablePlugins[activityConfig.id];
+        if (PluginClass) {
+          this.pluginRegistry.register(new PluginClass());
+        } else {
+          console.warn(`Plugin not found for activity: ${activityConfig.id}`);
+        }
+      });
+  }
 
   async getActivityRankings(
     city: string,
     country: string,
     latitude: number,
     longitude: number,
-  ): Promise<LocationWeatherRanking> {
+  ): Promise<ILocationWeatherRanking> {
     const weatherForecast = await this.weatherService.getWeatherForecast(
       latitude,
       longitude,
     );
 
-    const forecast: DailyRanking[] = weatherForecast.map((dailyWeather) => ({
+    // Get marine data if any plugins require it
+    let marineForecast: IDailyMarineData[] | undefined;
+    const needsMarineData = this.pluginRegistry.getAllPlugins()
+      .some(plugin => plugin.getRequiredDataSources().includes(DataSource.MARINE));
+    
+    if (needsMarineData) {
+      try {
+        marineForecast = await this.weatherService.getMarineForecast(latitude, longitude);
+      } catch (error) {
+        console.warn('Marine data not available for this location');
+      }
+    }
+
+    const forecast: IDailyRanking[] = weatherForecast.map((dailyWeather, index) => ({
       date: dailyWeather.date,
       weather: dailyWeather,
-      rankings: this.calculateActivityRankings(dailyWeather),
+      rankings: this.calculateActivityRankings(dailyWeather, marineForecast?.[index]),
     }));
 
     return {
@@ -49,65 +88,48 @@ export class RankingService {
     };
   }
 
-  private calculateActivityRankings(weather: DailyWeatherData): ActivityRanking[] {
-    const activities: ActivityType[] = [
-      ACTIVITIES.SKIING,
-      ACTIVITIES.SURFING,
-      ACTIVITIES.OUTDOOR_SIGHTSEEING,
-      ACTIVITIES.INDOOR_SIGHTSEEING,
-    ];
-    return activities
-      .map((activity) => this.rankActivity(activity, weather))
+  getAvailableActivities(): string[] {
+    return this.pluginRegistry.getPluginIds();
+  }
+
+  getActivityCount(): number {
+    return this.pluginRegistry.getPluginCount();
+  }
+
+  private calculateActivityRankings(weather: IDailyWeatherData, marine?: IDailyMarineData): IActivityRanking[] {
+    const plugins = this.pluginRegistry.getAllPlugins();
+    return plugins
+      .map((plugin) => this.rankActivity(plugin.id as ActivityType, weather, marine))
       .sort((a, b) => b.score - a.score);
   }
 
-  private rankActivity = (activity: ActivityType, weather: DailyWeatherData): ActivityRanking => {
-    const avgTemp = (weather.temperatureMax + weather.temperatureMin) / 2;
-    
-    let score = 0;
-    let reason = '';
-    let suitability: 'excellent' | 'good' | 'fair' | 'poor' = 'poor';
-
-    switch (activity) {
-      case ACTIVITIES.SKIING:
-        score = calculateSkiingScore(weather, avgTemp);
-        reason = getSkiingReason(weather, avgTemp);
-        break;
+  private rankActivity = (activityId: ActivityType, weather: IDailyWeatherData, marine?: IDailyMarineData): IActivityRanking => {
+    try {
+      const plugin = this.pluginRegistry.getPlugin(activityId);
+      const result = plugin.scoreActivity(weather, marine);
       
-      case ACTIVITIES.SURFING:
-        score = calculateSurfingScore(weather, avgTemp);
-        reason = getSurfingReason(weather, avgTemp);
-        break;
-      
-      case ACTIVITIES.OUTDOOR_SIGHTSEEING:
-        score = calculateOutdoorSightseeingScore(weather, avgTemp);
-        reason = getOutdoorSightseeingReason(weather, avgTemp);
-        break;
-      
-      case ACTIVITIES.INDOOR_SIGHTSEEING:
-        score = calculateIndoorSightseeingScore(weather, avgTemp);
-        reason = getIndoorSightseeingReason(weather, avgTemp);
-        break;
-
-      default: {
-        console.warn(`Could not find handlers for activity: ${activity} please add to ranking engine.`);
-      }
+      return {
+        activity: activityId,
+        score: result.score,
+        reason: result.reason,
+        conditions: {
+          temperature: `${weather.temperatureMin}°C - ${weather.temperatureMax}°C`,
+          weather: getWeatherDescription(weather),
+          suitability: result.suitability,
+        },
+      };
+    } catch (error) {
+      console.warn(`Could not find plugin for activity: ${activityId}`);
+      return {
+        activity: activityId,
+        score: 0,
+        reason: 'Activity plugin not available',
+        conditions: {
+          temperature: `${weather.temperatureMin}°C - ${weather.temperatureMax}°C`,
+          weather: getWeatherDescription(weather),
+          suitability: 'poor',
+        },
+      };
     }
-
-    if (score >= SUITABILITY_SCORES.EXCELLENT) suitability = 'excellent';
-    else if (score >= SUITABILITY_SCORES.GOOD) suitability = 'good';
-    else if (score >= SUITABILITY_SCORES.FAIR) suitability = 'fair';
-    else suitability = 'poor';
-
-    return {
-      activity,
-      score,
-      reason,
-      conditions: {
-        temperature: `${weather.temperatureMin}°C - ${weather.temperatureMax}°C`,
-        weather: getWeatherDescription(weather),
-        suitability,
-      },
-    };
   }
 }

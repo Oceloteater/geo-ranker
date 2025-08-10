@@ -1,4 +1,4 @@
-import { DailyWeatherData } from '../../../types/shared.types';
+import { IDailyWeatherData } from '../../../common/types';
 
 /**
  * Note that this engine has hardcoded values but in a real app this would be all config driven
@@ -8,7 +8,7 @@ import { DailyWeatherData } from '../../../types/shared.types';
  * @param weather
  * @param avgTemp
  */
-export const calculateSkiingScore = (weather: DailyWeatherData, avgTemp: number): number => {
+export const calculateSkiingScore = (weather: IDailyWeatherData, avgTemp: number): number => {
   let score = 0;
   
   // Temperature scoring (cold is good for skiing)
@@ -37,7 +37,7 @@ export const calculateSkiingScore = (weather: DailyWeatherData, avgTemp: number)
   return Math.min(100, score);
 };
 
-export const calculateSurfingScore = (weather: DailyWeatherData, avgTemp: number): number => {
+export const calculateSurfingScore = (weather: IDailyWeatherData, avgTemp: number): number => {
   let score = 0;
   
   // Temperature (warm is good)
@@ -67,7 +67,7 @@ export const calculateSurfingScore = (weather: DailyWeatherData, avgTemp: number
   return Math.min(100, score);
 };
 
-export const calculateOutdoorSightseeingScore = (weather: DailyWeatherData, avgTemp: number): number => {
+export const calculateOutdoorSightseeingScore = (weather: IDailyWeatherData, avgTemp: number): number => {
   let score = 0;
   
   // Temperature (mild is best)
@@ -97,7 +97,7 @@ export const calculateOutdoorSightseeingScore = (weather: DailyWeatherData, avgT
   return Math.min(100, score);
 };
 
-export const calculateIndoorSightseeingScore = (weather: DailyWeatherData, avgTemp: number): number => {
+export const calculateIndoorSightseeingScore = (weather: IDailyWeatherData, avgTemp: number): number => {
   let score = 50; // Base score since weather matters less
   
   // Bad weather makes indoor activities more appealing
@@ -114,7 +114,7 @@ export const calculateIndoorSightseeingScore = (weather: DailyWeatherData, avgTe
   return Math.min(100, score);
 };
 
-export const getSkiingReason = (weather: DailyWeatherData, avgTemp: number): string => {
+export const getSkiingReason = (weather: IDailyWeatherData, avgTemp: number): string => {
   if (avgTemp >= -5 && avgTemp <= 5) {
     return 'Perfect skiing temperature with good snow conditions';
   } else if (avgTemp > 5) {
@@ -124,7 +124,7 @@ export const getSkiingReason = (weather: DailyWeatherData, avgTemp: number): str
   }
 };
 
-export const getSurfingReason = (weather: DailyWeatherData, avgTemp: number): string => {
+export const getSurfingReason = (weather: IDailyWeatherData, avgTemp: number): string => {
   if (weather.windSpeed >= 10 && weather.windSpeed <= 25 && avgTemp >= 20) {
     return 'Good wind and warm temperature for surfing';
   } else if (avgTemp < 15) {
@@ -134,7 +134,7 @@ export const getSurfingReason = (weather: DailyWeatherData, avgTemp: number): st
   }
 };
 
-export const getOutdoorSightseeingReason = (weather: DailyWeatherData, avgTemp: number): string => {
+export const getOutdoorSightseeingReason = (weather: IDailyWeatherData, avgTemp: number): string => {
   if (weather.precipitation > 5) {
     return 'Rain may limit outdoor activities';
   } else if (avgTemp >= 15 && avgTemp <= 25 && weather.precipitation < 2) {
@@ -144,7 +144,7 @@ export const getOutdoorSightseeingReason = (weather: DailyWeatherData, avgTemp: 
   }
 };
 
-export const getIndoorSightseeingReason = (weather: DailyWeatherData, avgTemp: number): string => {
+export const getIndoorSightseeingReason = (weather: IDailyWeatherData, avgTemp: number): string => {
   if (weather.precipitation > 10) {
     return 'Rainy weather - perfect for museums and indoor attractions';
   } else if (avgTemp < 5 || avgTemp > 30) {
@@ -154,7 +154,7 @@ export const getIndoorSightseeingReason = (weather: DailyWeatherData, avgTemp: n
   }
 };
 
-export const getWeatherDescription = (weather: DailyWeatherData): string => {
+export const getWeatherDescription = (weather: IDailyWeatherData): string => {
   const conditions = [];
   
   if (weather.precipitation > 10) conditions.push('heavy rain');
