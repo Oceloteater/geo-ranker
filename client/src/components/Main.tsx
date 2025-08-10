@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useGeoRankerWorkflow } from '../hooks/useGeoRankerApi';
+import { useResponsive } from '../hooks/useResponsive';
 import { Location } from '../types/api.types';
 import { exampleLocationQuery } from '../types/examples';
 import QuickExamples from './QuickExamples';
@@ -9,6 +10,7 @@ import ActivityRankings from './ActivityRankings';
 
 const Main: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
+  const { isMobile, isDesktop } = useResponsive();
 
   const {
     searchLocations,
@@ -48,9 +50,26 @@ const Main: React.FC = () => {
     });
   };
 
+  const getContainerStyle = () => ({
+    padding: isMobile ? '16px' : '20px',
+    fontFamily: 'Arial, sans-serif',
+    maxWidth: isDesktop ? '1400px' : '100%',
+    margin: '0 auto',
+    minHeight: '100vh',
+    backgroundColor: '#f8f9fa'
+  });
+
+  const getTitleStyle = () => ({
+    textAlign: 'center' as const,
+    marginBottom: isMobile ? '24px' : '32px',
+    fontSize: isMobile ? '28px' : '36px',
+    color: '#2c3e50',
+    textShadow: '0 2px 4px rgba(0,0,0,0.1)'
+  });
+
   return (
-    <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif' }}>
-      <h1>🌦️ Geo-Ranker</h1>
+    <div style={getContainerStyle()}>
+      <h1 style={getTitleStyle()}>🌦️ Geo-Ranker</h1>
       
       <QuickExamples 
         onSearchExample={handleExampleQuery}

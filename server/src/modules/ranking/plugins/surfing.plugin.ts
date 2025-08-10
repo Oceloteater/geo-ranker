@@ -11,13 +11,20 @@ export class SurfingPlugin implements IActivityPlugin {
   }
 
   scoreActivity(weather: IDailyWeatherData, marine?: IDailyMarineData): IActivityScore {
+    // If no marine data available or all wave data is 0/null, surfing is not possible at this location
+    if (!marine || marine.averages.waveHeight === null || marine.averages.waveHeight === undefined || marine.averages.waveHeight === 0) {
+      return {
+        score: 0,
+        reason: 'No surfing conditions - location is not near suitable water bodies with wave data',
+        suitability: 'poor'
+      };
+    }
+
     const avgTemp = (weather.temperatureMax + weather.temperatureMin) / 2;
     let score = this.calculateWeatherScore(weather, avgTemp);
     
-    // Add marine data scoring if available
-    if (marine) {
-      score += this.calculateMarineScore(marine);
-    }
+    // Add marine data scoring
+    score += this.calculateMarineScore(marine);
     
     const reason = this.getReason(weather, avgTemp, marine);
     const suitability = this.getSuitability(score);

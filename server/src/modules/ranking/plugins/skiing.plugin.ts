@@ -12,6 +12,16 @@ export class SkiingPlugin implements IActivityPlugin {
 
   scoreActivity(weather: IDailyWeatherData, marine?: IDailyMarineData): IActivityScore {
     const avgTemp = (weather.temperatureMax + weather.temperatureMin) / 2;
+    
+    // If it's consistently too warm (tropical/desert climates), skiing is not suitable
+    if (avgTemp > 15 && weather.temperatureMin > 10) {
+      return {
+        score: 0,
+        reason: 'Location too warm for skiing - no snow conditions available',
+        suitability: 'poor'
+      };
+    }
+
     const score = this.calculateScore(weather, avgTemp);
     const reason = this.getReason(weather, avgTemp);
     const suitability = this.getSuitability(score);
