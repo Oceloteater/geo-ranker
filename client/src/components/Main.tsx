@@ -15,11 +15,13 @@ const Main: React.FC = () => {
 
   const {
     searchLocations,
+    searchLocationsImmediate,
     locations,
     searchLoading,
     searchError,
     selectedLocation,
     selectLocation,
+    selectLocationImmediate,
     rankings,
     rankingsLoading,
     rankingsError
@@ -41,11 +43,15 @@ const Main: React.FC = () => {
 
   const handleExampleQuery = (exampleQuery: string) => {
     setSearchQuery(exampleQuery);
-    searchLocations(exampleQuery);
+    setShowEmptySearchMessage(false); // Clear warning message
+    searchLocationsImmediate(exampleQuery); // Use immediate for quick examples
   };
 
   const handleDirectLocationQuery = () => {
-    selectLocation({
+    const locationName = `${exampleLocationQuery.city}, ${exampleLocationQuery.country}`;
+    setSearchQuery(locationName); // Update search field to match selected location
+    setShowEmptySearchMessage(false); // Clear warning message
+    selectLocationImmediate({ // Use immediate for quick examples
       name: exampleLocationQuery.city,
       country: exampleLocationQuery.country,
       latitude: exampleLocationQuery.latitude,

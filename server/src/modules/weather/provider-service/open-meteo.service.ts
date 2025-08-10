@@ -83,7 +83,7 @@ export class OpenMeteoService {
     } catch (error) {
       console.error('Weather forecast error:', error);
       throw new HttpException(
-        'Failed to fetch weather forecast',
+        'Failed to fetch weather forecast, please try again shortly',
         HttpStatus.BAD_REQUEST,
       );
     }
@@ -123,7 +123,7 @@ export class OpenMeteoService {
     } catch (error) {
       console.error('Marine forecast error:', error);
       throw new HttpException(
-        'Failed to fetch marine forecast',
+        'Failed to fetch marine forecast, please try again shortly',
         HttpStatus.BAD_REQUEST,
       );
     }

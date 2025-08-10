@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useQuery, useLazyQuery } from '@apollo/client';
+import { useDebounce } from './useDebounce';
 import { 
   SEARCH_LOCATIONS, 
   GET_ACTIVITY_RANKINGS, 
@@ -85,18 +86,42 @@ export const useGeoRankerWorkflow = () => {
   const searchHook = useSearchLocations();
   const rankingsHook = useActivityRankings();
 
-  const selectLocation = (location: Location) => {
+  // Debounced search function - prevents rapid API calls when typing/clicking quickly
+  const debouncedSearch = useDebounce((query: string) => {
+    searchHook.search(query);
+  }, 300); // 300ms delay
+
+  // Debounced location selection - prevents rapid API calls when clicking multiple locations
+  const debouncedSelectLocation = useDebounce((location: Location) => {
     setSelectedLocation(location);
     rankingsHook.fetchRankings(location);
+  }, 200); // 200ms delay (shorter for better UX)
+
+  const selectLocation = (location: Location) => {
+    // Update selected location immediately for UI feedback
+    setSelectedLocation(location);
+    // But debounce the API call
+    debouncedSelectLocation(location);
   };
 
   const searchAndSelect = (query: string) => {
+    debouncedSearch(query);
+  };
+
+  // For quick examples - no debouncing needed since these are intentional clicks
+  const searchLocationsImmediate = (query: string) => {
     searchHook.search(query);
+  };
+
+  const selectLocationImmediate = (location: Location) => {
+    setSelectedLocation(location);
+    rankingsHook.fetchRankings(location);
   };
 
   return {
     // Search functionality
     searchLocations: searchAndSelect,
+    searchLocationsImmediate, // For quick examples
     locations: searchHook.locations,
     searchLoading: searchHook.loading,
     searchError: searchHook.error,
@@ -104,6 +129,7 @@ export const useGeoRankerWorkflow = () => {
     // Location selection
     selectedLocation,
     selectLocation,
+    selectLocationImmediate, // For quick examples
 
     // Rankings functionality
     rankings: rankingsHook.rankings,
