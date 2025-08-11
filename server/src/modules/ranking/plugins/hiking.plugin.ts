@@ -1,6 +1,9 @@
 import { IActivityPlugin, IActivityScore, DataSource } from '../../../common/types';
 import { IDailyWeatherData, IDailyMarineData } from '../../../common/types';
 
+/**
+ * Hiking Plugin was just an example of how easy it was to add another activity to the system
+ */
 export class HikingPlugin implements IActivityPlugin {
   readonly id = 'hiking';
   readonly name = 'hiking';

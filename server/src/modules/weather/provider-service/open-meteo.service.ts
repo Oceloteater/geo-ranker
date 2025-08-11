@@ -43,7 +43,6 @@ export class OpenMeteoService {
     latitude: number,
     longitude: number,
   ): Promise<IDailyWeatherData[]> {
-    console.log('URL:', `${this.baseUrl}/forecast`);
     try {
       const response = await axios.get<IWeatherApiResponse>(
         `${this.baseUrl}/forecast`,
@@ -66,7 +65,6 @@ export class OpenMeteoService {
           },
         },
       );
-      console.log('DATA:', response.data);
       const { daily } = response.data;
 
       return daily.time.map((date, index) => ({
@@ -93,7 +91,6 @@ export class OpenMeteoService {
     latitude: number,
     longitude: number,
   ): Promise<IDailyMarineData[]> {
-    console.log('URL:', `${this.marineUrl}/marine`);
     try {
       const response = await axios.get<IMarineApiResponse>(
         `${this.marineUrl}/marine`,
@@ -115,7 +112,6 @@ export class OpenMeteoService {
           },
         },
       );
-      console.log('Marine DATA:', response.data);
       const { hourly } = response.data;
 
       // Group hourly data by day and calculate daily averages
