@@ -1,0 +1,14 @@
+# ADAM's REVIEW
+
+My overall thoughts, opinions and considerations of my work throughout this assessment. Please note I used this project as a test case for my first use of Claude Code, very interesting experience. Much of the scaffolding/boilerplate was generated because I don't think I was really going to be assessed on this, I focused on design, architectural decisions and generally asked myself, how would someone use and extend this system in the future. 
+
+## Project Timeline
+
+The following is how I split up and managed my time to complete the assessment, upon reflection I think I spent a lot more than the 2-3 hours suggested but was still quite strict on my time so one particular task or feature didn't get the better of me and eat up my time.
+
+- **Day (evening) 1:** Didn't even try to write code, just took the evening to read the brief, fully understand the problem, draw up a rough plan in my notebook, made a Postman collection so I could experiment with the open-meteo API. I was primarily concerned with the data I needed to handle, the data was very raw so I had to think how to make it useful, and manageable. Also, while on https://open-meteo.com/ I noticed there was a marine API which I suspected was likely geared towards the surfing use case so I played about with that as well.
+- **Day 2:** Allocated to API work, the whole system is hinged on the API and if we're not handling the data correctly the app is useless. I used AI to scaffold the project, I used TypeScript and Nest.js as it's what I'm familiar with, and opinionated (in a good way) to ensure best structure and coding practices. Handling each activity started out in a big switch statement but quickly I realised one of the major gotchas of this project is to see how we extend the system with more activities and where the logic lived. More on that later.
+- **Day 3:** Allocated (mostly) to frontend work, I'm very comfortable with React so this was straightward, applying all the best in class React patterns with small, composable components with hooks abstracted for logic. However, it's when got my frontend pulling data I noticed that the logic applied to the data was all wrong - and realised that working out "skiing" and "surfing" conditions where going to be more difficult, and likely could have taken up way more time to get "right". Did what I could and moved on, made some small UI quality of life improvements for demo purposes. 
+- **Day (evening) 4:** Final evening was to review everything I had, but also dockerise the app so it was easy to review and write up this document, reflecting on my experiences and considerations I wanted to share, this is what you're reading...
+
+## TODO
