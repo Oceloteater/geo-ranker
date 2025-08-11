@@ -13,18 +13,19 @@ export class SkiingPlugin implements IActivityPlugin {
   scoreActivity(weather: IDailyWeatherData, marine?: IDailyMarineData): IActivityScore {
     const avgTemp = (weather.temperatureMax + weather.temperatureMin) / 2;
     
-    // Check for extremely warm locations (tropical/desert)
-    if (avgTemp > 20 || weather.temperatureMin > 15) {
+    // More lenient check - only eliminate truly tropical locations
+    // (Summer weather in ski destinations can be warm, but slopes at altitude will be much colder)
+    if (avgTemp > 25 || weather.temperatureMin > 20) {
       return {
         score: 0,
-        reason: 'Location too warm for skiing - no snow conditions available',
+        reason: 'Location too warm for skiing even at high altitude',
         suitability: 'poor'
       };
     }
 
     const score = this.calculateScore(weather, avgTemp);
-    const reason = this.getReason(weather, avgTemp);
     const suitability = this.getSuitability(score);
+    const reason = this.getReason(weather, avgTemp, score);
 
     return { score, reason, suitability };
   }
@@ -60,17 +61,33 @@ export class SkiingPlugin implements IActivityPlugin {
     return Math.min(100, score);
   }
 
-  private getReason(weather: IDailyWeatherData, avgTemp: number): string {
-    if (avgTemp >= -5 && avgTemp <= 5) {
-      return 'Excellent conditions for skiing at nearby mountain resorts';
-    } else if (avgTemp >= -10 && avgTemp <= 10) {
-      return 'Very good skiing conditions expected at altitude';
-    } else if (avgTemp >= -15 && avgTemp <= 15) {
-      return 'Good skiing conditions - mountains will be colder than valley temperatures';
-    } else if (avgTemp > 15) {
-      return 'Too warm even for high altitude skiing';
+  private getReason(weather: IDailyWeatherData, avgTemp: number, score: number): string {
+    // For excellent scores, always give positive messaging
+    if (score >= 80) {
+      return 'Excellent skiing conditions - perfect temperatures and weather for mountain resorts';
+    }
+    
+    // For good scores, focus on positives
+    if (score >= 65) {
+      if (avgTemp <= 5) {
+        return 'Good skiing conditions at nearby mountain resorts';
+      } else {
+        return 'Good skiing expected - mountains will be much colder than valley temperatures';
+      }
+    }
+    
+    // For fair scores, be balanced
+    if (score >= 50) {
+      return 'Fair skiing conditions - check mountain weather reports for best slopes';
+    }
+    
+    // For poor scores, explain why
+    if (avgTemp > 20) {
+      return 'Too warm for skiing even at high altitude';
+    } else if (avgTemp < -15) {
+      return 'Very cold conditions - excellent for powder but bundle up';
     } else {
-      return 'Very cold conditions - excellent for powder skiing';
+      return 'Limited skiing conditions - weather not ideal for mountain sports';
     }
   }
 

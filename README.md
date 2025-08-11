@@ -15,23 +15,69 @@ The system uses a plugin-based architecture that makes it easy to add new activi
 ## Tech Stack
 
 - **Backend**: Node.js with NestJS and GraphQL
-- **Frontend**: React (planned)
-- **Weather Data**: Open-Meteo API
+- **Frontend**: React with TypeScript and Apollo Client
+- **Weather Data**: Open-Meteo API (free, no API key required)
 - **Architecture**: TypeScript monorepo with plugin-based activity system
+- **Deployment**: Docker with multi-stage builds and Docker Compose
 
 ## Quick Start
 
-### Development Commands
+### 🐳 Docker (Recommended)
+
+The easiest way to run the full stack application:
 
 ```bash
-# Install dependencies
+# Clone the repository
+git clone <your-repo-url>
+cd geo-ranker
+
+# Start everything with Docker Compose
+docker compose up
+
+# Access the application
+# Frontend: http://localhost:3000
+# Backend API: http://localhost:4000
+# GraphQL Playground: http://localhost:4000/graphql
+```
+
+That's it! The application will be running with both frontend and backend containers.
+
+#### Docker Commands
+
+```bash
+# Start in background
+docker compose up -d
+
+# View logs
+docker compose logs -f
+
+# Stop containers
+docker compose down
+
+# Rebuild containers
+docker compose up --build
+
+# Clean up everything
+docker compose down --volumes --rmi all
+```
+
+### 💻 Local Development
+
+For development without Docker:
+
+```bash
+# Install dependencies for both client and server
 npm install
 
-# Start backend development server
-npm run dev:server
+# Terminal 1: Start backend server
+cd server
+npm install
+npm run start:dev
 
-# Build the project
-npm run build
+# Terminal 2: Start frontend client  
+cd client
+npm install
+npm start
 
 # Health check
 curl http://localhost:4000/health
