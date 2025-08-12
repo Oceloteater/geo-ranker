@@ -14,7 +14,6 @@
     "sourceMap": true
   },
   "references": [
-    { "path": "./shared" },
     { "path": "./server" },
     { "path": "./client" }
   ]

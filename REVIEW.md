@@ -11,4 +11,38 @@ The following is how I split up and managed my time to complete the assessment, 
 - **Day 3:** Allocated (mostly) to frontend work, I'm very comfortable with React so this was straightward, applying all the best in class React patterns with small, composable components with hooks abstracted for logic. However, it's when got my frontend pulling data I noticed that the logic applied to the data was all wrong - and realised that working out "skiing" and "surfing" conditions where going to be more difficult, and likely could have taken up way more time to get "right". Did what I could and moved on, made some small UI quality of life improvements for demo purposes. 
 - **Day (evening) 4:** Final evening was to review everything I had, but also dockerise the app so it was easy to review and write up this document, reflecting on my experiences and considerations I wanted to share, this is what you're reading...
 
-## TODO
+## Architecture Decisions
+
+Highlighting some of the most important considerations in terms of separation of concerns, extensibility and scaling.
+
+### Activity Plugins
+
+I feel this was probably the crux of the whole assignment so particular thought was given to how we handle activities and encapsulate their messy logic into one manageable place. If one wants to add another activity (brief example of hiking in project) then simply implement `IActivityPlugin` when creating a new plugin and it'll behave like the rest. In short:
+
+- Adding new plugin by implementing contract, enable/disable and set priority scoring with no core changes to system.
+- Plugin registry discovers activities at run time via config (emulated via a JSON object for demo purposes).
+- Individual scoring/ranking logic wrapped up in each activity's plugin/module (ideally would also be config driven in real system) had to just guess weighting for values for demo purposes.
+- Architecture designs, primarily my activity register, weather vs ranking modules, abstraction of logic and handlers.
+
+### Clean Architecture and Design
+
+- Separation of data fetching (weather module) via the open-meteo provider service, business logic which is abstracted into their own activity modules and handled in the ranking module. 
+- API layer with GraphQL and resolvers, not actually my decision project requirement but GraphQL allows for flexible queries and adding more data in the future.
+- Frontend-wise it follows are similar pattern, UI components are display components only, hooked used for fetching and handling data and API layer impl with apollo client and preset queries for data fetching.
+- Debouncing added to service calls to stop users spamming the API -  trying to do it myself.
+
+### Business/Domain Logic
+
+- This was actually the hardest part to implement because who says what is considered hot, or cold, or too windy for outdoors etc so just had to assume everything.
+- Each activity module implements its own logic in one file but brought another by a unified scoring system (0-100) and adjustments made accordingly.
+
+### Omissions & Trade-offs
+
+- Trade-offs made for handling data for surfing and skiing which were tricky because they relied on more data points than just indoor/outdoor activities.
+- **Surfing** required extra data from the `/marine` API to be compared and weighted again the regular data points, plugin handles this optional extra data set if needed and present. Tried my best to implement but likely needs proximity to the coast and there wasn't enough time to implement this.
+- **Skiing** similar in the sense it requirements the factor of altitude to be considered, again complexity grew as I tried to factor in more variables but lef it as-is. Cape Town is apparently a skiing destination if you're in the mountains (joke).
+- As stated before, weighting and values needs to be config driven, I would leave to be a business person to tell me what exactly would be considered for each and how the weighting should be applied in a real application, regardless it's easy to make these changes as all this business logic only lives in each activity plugin implementation.
+
+## Summary
+
+Overall, this was a fun assignment, obviously another 100 things could have been done but I think this is decent attempt, while sticking to the timeline given and not going overboard, hopefully it's easy for you to parse, if you got this far thank you for reading my analysis!

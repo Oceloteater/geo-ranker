@@ -4,8 +4,7 @@
   "private": true,
   "workspaces": [
     "server",
-    "client",
-    "shared"
+    "client"
   ],
   "scripts": {
     "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
@@ -18,7 +17,7 @@
     "start:server": "npm run start --workspace=server",
     "start:server-prod": "npm run start:prod --workspace=server",
     "test": "npm run test --workspaces",
-    "clean": "rm -rf node_modules server/node_modules client/node_modules shared/node_modules server/dist client/build"
+    "clean": "rm -rf node_modules server/node_modules client/node_modules server/dist client/build"
   },
   "devDependencies": {
     "concurrently": "^8.2.2",

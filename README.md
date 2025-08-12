@@ -28,11 +28,11 @@ The easiest way to run the full stack application:
 
 ```bash
 # Clone the repository
-git clone <your-repo-url>
+git clone https://github.com/oceloteater/geo-ranker.git
 cd geo-ranker
 
 # Start everything with Docker Compose
-docker compose up
+docker compose up --build
 
 # Access the application
 # Frontend: http://localhost:3000
@@ -225,17 +225,6 @@ OPEN_METEO_MARINE_URL=https://marine-api.open-meteo.com/v1
 # Activity Configuration (JSON)
 ACTIVITY_CONFIG='[{"id":"skiing","enabled":true,"priority":1}]'
 ```
-
-## Development Notes
-
-This project was built with a focus on:
-- **Clean architecture** with clear separation of concerns
-- **Extensibility** through plugin-based design
-- **Type safety** with comprehensive TypeScript interfaces
-- **Maintainability** over feature completeness
-- **Code quality** and best practices
-
-Time constraint: 2-3 hours focus on architecture over features.
 
 ## Future Enhancements
 
